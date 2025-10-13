@@ -56,6 +56,10 @@ git push -u origin feature/기능명
 
 - 작업한 feature 브랜치를 원격 저장소에 올리고, 업스트림 브랜치로 설정합니다.
 
+![cmdImage02.png](cmdImage02.png)
+![featureBranch.png](featureBranch.png)
+![myFeatureBranch.png](myFeatureBranch.png)
+
 1. **추가 작업 시 최신 develop 내용 반영**
 
 ```bash
@@ -71,6 +75,7 @@ git merge develop               #develop 분기와 merge
 1. **작업 완료 후 develop으로 Pull Request 생성**
 - GitHub 에서 `feature` 브랜치를 `develop`으로 병합하는 `Pull Request`를 생성합니다.
 
+![pullRequest.png](pullRequest.png)
 ---
 
 ### `main - develop - feature` 구조를 추천드리는 이유 :
