@@ -36,7 +36,7 @@ git pull origin develop
 
 1. **feature 브랜치 생성**
 
-![cmdImage01.png](cmdImage01.png)
+![cmdImage01.PNG](cmdImage01.PNG)
 
 ```bash
 git checkout -b feature/기능명
@@ -56,9 +56,9 @@ git push -u origin feature/기능명
 
 - 작업한 feature 브랜치를 원격 저장소에 올리고, 업스트림 브랜치로 설정합니다.
 
-![cmdImage02.png](cmdImage02.png)
-![featureBranch.png](featureBranch.png)
-![myFeatureBranch.png](myFeatureBranch.png)
+![cmdImage02.PNG](cmdImage02.PNG)
+![featureBranch.PNG](featureBranch.PNG)
+![myFeatureBranch.PNG](myFeatureBranch.PNG)
 
 1. **추가 작업 시 최신 develop 내용 반영**
 
@@ -75,7 +75,7 @@ git merge develop               #develop 분기와 merge
 1. **작업 완료 후 develop으로 Pull Request 생성**
 - GitHub 에서 `feature` 브랜치를 `develop`으로 병합하는 `Pull Request`를 생성합니다.
 
-![pullRequest.png](pullRequest.png)
+![pullRequest.PNG](pullRequest.PNG)
 ---
 
 ### `main - develop - feature` 구조를 추천드리는 이유 :
