@@ -8,7 +8,7 @@
 - API 및 화면 설계 목업(와이어프레임) 작성  
 
 ### 2) 저장소 및 환경 세팅
-- GitHub 저장소 생성 및 브랜치 전략(메인/개발/feature) 설정  
+- GitHub 저장소 생성 및 [브랜치 전략(메인/개발/feature)](./BRANCH.md) 설정 
 - 프로젝트 초기 구조 생성  
   - 백엔드: Spring 프로젝트 생성 (`spring init`)  
   - 프론트엔드: Create React App  
