@@ -1,0 +1,14 @@
+.help-page {
+  padding: 60px 16px;
+}
+
+.help-page h1 {
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.help-page p {
+  font-size: 14px;
+  color: #666;
+}

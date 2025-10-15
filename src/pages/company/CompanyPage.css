@@ -1,0 +1,14 @@
+.company-page {
+  padding: 60px 16px;
+}
+
+.company-page h1 {
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.company-page p {
+  font-size: 14px;
+  color: #444;
+}

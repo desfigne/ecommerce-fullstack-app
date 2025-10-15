@@ -1,0 +1,32 @@
+import React from "react";
+import "../Page.css";
+import { useNavigate } from "react-router-dom";
+
+function SportsFitness() {
+  const products = [
+    { id: 1, name: "", desc: "", price: "", img: "/images/스포츠/피트니스/sports_fitness1.webp" },
+    { id: 2, name: "", desc: "", price: "", img: "/images/스포츠/피트니스/sports_fitness2.webp" },
+    { id: 3, name: "", desc: "", price: "", img: "/images/스포츠/피트니스/sports_fitness3.webp" },
+    { id: 4, name: "", desc: "", price: "", img: "/images/스포츠/피트니스/sports_fitness4.webp" },
+    { id: 5, name: "", desc: "", price: "", img: "/images/스포츠/피트니스/sports_fitness5.webp" },
+    { id: 6, name: "", desc: "", price: "", img: "/images/스포츠/피트니스/sports_fitness6.webp" },
+  ];
+
+  return (
+    <div className="page">
+      <h1>스포츠 피트니스 페이지</h1>
+      <div className="product-grid">
+        {products.map((p) => (
+          <div className="product-card" key={p.id}>
+            <img src={p.img} alt={p.name} />
+            <h4>{p.name}</h4>
+            <p className="desc">{p.desc}</p>
+            <p className="price">{p.price}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default SportsFitness;

@@ -1,0 +1,29 @@
+.hero {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.hero img {
+  width: 100%;
+  display: block;
+}
+
+.hero-text {
+  position: absolute;
+  bottom: 30px;
+  left: 30px;
+  color: #fff;
+}
+
+.hero-text h2 {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.hero-text p {
+  margin-top: 8px;
+  font-size: 14px;
+}
