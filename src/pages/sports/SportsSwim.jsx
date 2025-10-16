@@ -1,6 +1,7 @@
 import React from "react";
 import "../Page.css";
 import { useNavigate } from "react-router-dom";
+import ProductThumb from "../../components/ProductThumb";
 
 function SportsSwim() {
   const products = [
@@ -18,7 +19,7 @@ function SportsSwim() {
       <div className="product-grid">
         {products.map((p) => (
           <div className="product-card" key={p.id}>
-            <img src={p.img} alt={p.name} />
+            <ProductThumb product={p} />
             <h4>{p.name}</h4>
             <p className="desc">{p.desc}</p>
             <p className="price">{p.price}</p>

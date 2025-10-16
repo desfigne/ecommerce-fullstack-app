@@ -91,3 +91,30 @@
   font-size:14px;
 }
 .dropdown a:hover{ background:#f7f4fb; color:var(--brand); }
+
+order-link {
+  margin-left: 16px;
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.order-link:hover {
+  text-decoration: underline;
+}
+
+.cart-link {
+  margin-left: 16px;
+  color: #333;
+  text-decoration: none;
+}
+
+.logout-btn {
+  margin-left: 16px;
+  background: #111;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+}

@@ -2,6 +2,7 @@
 import React from "react";
 import "../Page.css";
 import { useHistory } from 'react-router-dom';
+import ProductThumb from "../../components/ProductThumb";
 
 function WomenMain() {
   return (

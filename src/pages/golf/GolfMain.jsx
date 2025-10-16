@@ -1,5 +1,7 @@
 import React from "react";
 import "../Page.css";
+
+
 function GolfMain() {
   return (
     <div className="page">

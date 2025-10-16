@@ -1,0 +1,163 @@
+/* === 기본 관리자 페이지 레이아웃 === */
+.admin-wrap {
+  max-width: 1200px;
+  margin: 50px auto;
+  padding: 20px;
+  font-family: "Pretendard", sans-serif;
+  color: #111;
+}
+
+.admin-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.admin-title {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.admin-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  padding: 20px;
+  margin-top: 10px;
+}
+
+.admin-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.admin-card-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.admin-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.admin-input {
+  padding: 7px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+}
+
+.admin-input:focus {
+  border-color: #888;
+}
+
+/* === 테이블 === */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.admin-table th,
+.admin-table td {
+  border-bottom: 1px solid #eee;
+  padding: 12px 10px;
+  text-align: center;
+}
+
+.admin-table th {
+  background: #fafafa;
+  font-weight: 700;
+}
+
+.empty {
+  text-align: center;
+  color: #777;
+  padding: 30px 0;
+}
+
+/* === 버튼 기본 === */
+.btn-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 90px;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid #ddd;
+  background: #fff;
+  color: #111;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  background: #f9fafb;
+  transform: translateY(-1px);
+}
+
+/* === 버튼 색상 종류 === */
+.btn--primary {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+.btn--primary:hover {
+  background: #000;
+}
+
+.btn--neutral {
+  background: #fff;
+  color: #374151;
+  border-color: #d1d5db;
+}
+.btn--neutral:hover {
+  background: #f3f4f6;
+}
+
+.btn--warning {
+  background: #ffce45;
+  color: #111;
+  border-color: #f5c233;
+}
+.btn--warning:hover {
+  background: #ffc52a;
+}
+
+.btn--danger {
+  background: #ef4444;
+  color: #fff;
+  border-color: #ef4444;
+}
+.btn--danger:hover {
+  background: #dc2626;
+}
+
+@media (max-width: 920px) {
+  .admin-wrap {
+    padding: 10px;
+  }
+  .btn {
+    min-width: 84px;
+    font-size: 13px;
+  }
+}
