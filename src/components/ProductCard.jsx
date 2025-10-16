@@ -1,16 +1,13 @@
 import "./ProductCard.css";
 
-export default function ProductCard() {
+export default function ProductCard({ id, name, brand, price, img }) {
   return (
     <div className="product-card">
-      <img
-        src="https://image.ssfshop.com/upload/product/sample-01.jpg"
-        alt="상품"
-      />
+      <img src={img} alt={name || "상품"} />
       <div className="product-info">
-        <p className="brand">BEANPOLE</p>
-        <h4 className="name">Checked Overshirt</h4>
-        <p className="price">₩199,000</p>
+        <p className="brand">{brand}</p>
+        <h4 className="name">{name}</h4>
+        <p className="price">{price}</p>
       </div>
     </div>
   );
