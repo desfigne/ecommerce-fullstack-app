@@ -1,6 +1,8 @@
 import React from "react";
 import { HashRouter as Router, Route, Switch } from "react-router-dom";
 import Header from "./components/Header";
+import Home from "./pages/home/Home";
+import Menu from "./pages/menu/Menu";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 import AccountRecovery from "./pages/auth/AccountRecovery";
@@ -10,7 +12,6 @@ import ProductDetail from "./pages/ProductDetail";
 import Checkout from "./pages/order/Checkout";
 import MyOrders from "./pages/order/MyOrders";
 import CartPage from "./pages/cart/CartPage";
-import Home from "./pages/home/Home";
 import WomenMain from "./pages/women/WomenMain";
 import WomenNew from "./pages/women/WomenNew";
 import WomenOuter from "./pages/women/WomenOuter";
@@ -80,7 +81,7 @@ function App() {
       <Header />
       <Switch>
         <Route exact path="/" component={Home} />
-
+        <Route path="/menu" component={Menu} />
         <Route path="/login" component={Login} />
         <Route path="/signup" component={Signup} />
         <Route path="/account/recovery" component={AccountRecovery} />

@@ -87,6 +87,7 @@ export default function Signup() {
               onChange={onChange}
               placeholder="email@example.com"
             />
+            
           </div>
           <div>
             <label>비밀번호</label>

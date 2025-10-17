@@ -1,149 +1,92 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import "./Home.css";
 
 export default function Home() {
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [page, setPage] = useState(0);
   const [activeProductTab, setActiveProductTab] = useState(0);
   const [activeRankingTab, setActiveRankingTab] = useState(0);
+  const totalPages = 3; // 9장 / 3장씩
 
-  const slides = [
-    {
-      title: "WINTER COLLECTION\n따뜻하고 스타일리시한\n겨울 아우터",
-      subtitle: "2025 F/W 신상품",
-      desc: "최대 60% 할인 + 무료배송",
-      image: "https://img.ssfshop.com/display/category/DSP/2025/01/main_banner_winter.jpg"
-    },
-    {
-      title: "프리미엄 캐시미어\n부드러운 터치감",
-      subtitle: "EXCLUSIVE COLLECTION",
-      desc: "한정 수량 특별가",
-      image: "https://img.ssfshop.com/display/category/DSP/2025/01/main_banner_cashmere.jpg"
-    },
-    {
-      title: "NEW ARRIVALS\n2025 봄 컬렉션 사전예약",
-      subtitle: "SPRING PREVIEW",
-      desc: "얼리버드 20% 할인",
-      image: "https://img.ssfshop.com/display/category/DSP/2025/01/main_banner_spring.jpg"
-    }
-  ];
+  const slides = useMemo(
+    () => [
+      { title: "8SECONDS", subtitle: "리즈와 함께면 지금이 리즈", desc: "BEYOND THE REBELS · 2nd Drop", image: "/icons/main1.webp" },
+      { title: "KUHO PLUS", subtitle: "25 Winter Collection", desc: "혜택이 넘치는 세싸패 LIVE", image: "/icons/main2.webp" },
+      { title: "J RIUM", subtitle: "나를 안는 부드러움", desc: "~38% + 7% + 5만포인트 + 사은품", image: "/icons/main3.webp" },
 
-  const productCategories = [
-    "니트 카디건",
-    "백 & 슈즈",
-    "쥬얼리 & 액세서리",
-    "뷰티 & 향수",
-    "코스메틱",
-    "키즈 & 베이비"
-  ];
+      { title: "COS", subtitle: "다가온 가을의 순간", desc: "변화하는 계절의 감각적인 스타일링", image: "/icons/main4.webp" },
+      { title: "UGG & REQINS", subtitle: "어쩔 수 없이 걷고 싶은 계절", desc: "어그, 호갱 등 인기 슈즈 특가", image: "/icons/main5.webp" },
+      { title: "ROUGE & LOUNGE", subtitle: "인플루언서가 탐낸 실루엣", desc: "F/W 레더 백 단독 할인", image: "/icons/main6.webp" },
 
-  const rankingCategories = [
-    "여성", "남성", "키즈", "럭셔리", "백&슈즈", "스포츠", "골프", "뷰티", "라이프"
-  ];
+      { title: "LEMAIRE", subtitle: "코지 니트 컬렉션", desc: "FW 신상품 얼리버드 20%", image: "/icons/main7.webp" },
+      { title: "BEANPOLE", subtitle: "따뜻한 데일리 아우터", desc: "시즌오프 최대 60% + 쿠폰", image: "/icons/main8.webp" },
+      { title: "Theory", subtitle: "소프트 캐시미어", desc: "한정 수량 특별가", image: "/icons/main9.webp" },
+    ],
+    []
+  );
 
-  // Auto slide
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000);
-    return () => clearInterval(timer);
+    const t = setInterval(() => setPage((p) => (p + 1) % totalPages), 5000);
+    return () => clearInterval(t);
   }, []);
 
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-  };
+  const prev = () => setPage((p) => (p - 1 + totalPages) % totalPages);
+  const next = () => setPage((p) => (p + 1) % totalPages);
+  const visibleSlides = slides.slice(page * 3, page * 3 + 3);
 
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  };
+  const productCategories = ["니트 카디건", "백 & 슈즈", "쥬얼리 & 액세서리", "뷰티 & 향수", "코스메틱", "키즈 & 베이비"];
+  const rankingCategories = ["여성", "남성", "키즈", "럭셔리", "백&슈즈", "스포츠", "골프", "뷰티", "라이프"];
 
   return (
     <>
-
-      {/* Main Content */}
       <main className="main-content">
-        {/* Hero Slider */}
-        <section className="hero-slider">
-          <div className="slider-container">
-            <div className="slider-wrapper">
-              {slides.map((slide, index) => (
-                <div key={index} className={`slide ${index === currentSlide ? 'active' : ''}`}>
-                  <div className="slide-content">
-                    <h2 className="slide-title">{slide.title}</h2>
-                    <p className="slide-subtitle">{slide.subtitle}</p>
-                    <p className="slide-desc">{slide.desc}</p>
-                  </div>
-                  <img src={slide.image} alt={slide.title} />
+        {/* === 3장씩 보이는 슬라이드 === */}
+        <section className="tri-hero">
+          <div className="tri-hero__wrap">
+            {visibleSlides.map((s, i) => (
+              <Link key={`${page}-${i}`} to="/menu" className="tri-card">
+                <img src={s.image} alt={s.title} className="tri-card__img" />
+                <div className="tri-card__overlay">
+                  <div className="tri-card__brand">{s.title}</div>
+                  <h2 className="tri-card__title">{s.subtitle}</h2>
+                  <p className="tri-card__desc">{s.desc}</p>
                 </div>
-              ))}
-            </div>
-            <div className="slider-controls">
-              <button className="prev-btn" aria-label="이전" onClick={prevSlide}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
-              <button className="next-btn" aria-label="다음" onClick={nextSlide}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
-            </div>
-            <div className="slider-dots">
-              {slides.map((_, index) => (
-                <span
-                  key={index}
-                  className={`dot ${index === currentSlide ? 'active' : ''}`}
-                  onClick={() => setCurrentSlide(index)}
-                ></span>
+              </Link>
+            ))}
+            <button className="tri-hero__nav tri-hero__prev" onClick={prev} aria-label="이전">
+              <svg width="24" height="24" viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </button>
+            <button className="tri-hero__nav tri-hero__next" onClick={next} aria-label="다음">
+              <svg width="24" height="24" viewBox="0 0 24 24">
+                <path d="M9 18l6-6-6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </button>
+            <div className="tri-hero__dots">
+              {[0, 1, 2].map((n) => (
+                <span key={n} className={`tri-dot ${page === n ? "active" : ""}`} onClick={() => setPage(n)} />
               ))}
             </div>
           </div>
         </section>
 
-        {/* Brand Logos Section */}
+        {/* === 브랜드 로고 === */}
         <section className="brand-logos">
           <div className="container">
             <div className="brand-slider">
               <div className="brand-track">
                 {[...Array(2)].map((_, dupIndex) => (
                   <React.Fragment key={dupIndex}>
-                    <div className="brand-item">
-                      <img src="https://img.ssfshop.com/display/category/DSP/2022/11/08/2211081550322820_20221108155303.jpg" alt="8seconds" />
-                      <span>에잇세컨즈</span>
-                    </div>
-                    <div className="brand-item">
-                      <img src="https://img.ssfshop.com/display/category/DSP/2022/11/08/2211081550425060_20221108155324.jpg" alt="BEANPOLE" />
-                      <span>빈폴</span>
-                    </div>
-                    <div className="brand-item">
-                      <img src="https://img.ssfshop.com/display/html/SSF/2019/0614_beaker/img/logo.png" alt="BEAKER" />
-                      <span>비이커</span>
-                    </div>
-                    <div className="brand-item">
-                      <img src="https://img.ssfshop.com/display/category/DSP/2022/11/08/2211081550522490_20221108155326.jpg" alt="KUHO" />
-                      <span>구호</span>
-                    </div>
-                    <div className="brand-item">
-                      <img src="https://img.ssfshop.com/display/html/DSP/2020/brand/isseymiyake/img/logo.png" alt="ISSEY MIYAKE" />
-                      <span>이세이미야케</span>
-                    </div>
-                    <div className="brand-item">
-                      <img src="https://img.ssfshop.com/display/category/DSP/2021/08/31/2108311455197420_20210831145659.png" alt="Theory" />
-                      <span>띠어리</span>
-                    </div>
-                    <div className="brand-item">
-                      <img src="https://img.ssfshop.com/display/html/DSP/2020/brand/cdg/img/logo.png" alt="COMME des GARCONS" />
-                      <span>꼼데가르송</span>
-                    </div>
-                    <div className="brand-item">
-                      <img src="https://img.ssfshop.com/display/html/DSP/2019/brand/patagonia/img/logo.png" alt="patagonia" />
-                      <span>파타고니아</span>
-                    </div>
-                    <div className="brand-item">
-                      <img src="https://img.ssfshop.com/display/html/DSP/2019/brand/cos/img/logo.png" alt="COS" />
-                      <span>코스</span>
-                    </div>
+                    <div className="brand-item"><img src="/icons/에잇세컨드.webp" alt="8seconds" /><span>에잇세컨즈</span></div>
+                    <div className="brand-item"><img src="/icons/빈폴.webp" alt="BEANPOLE" /><span>빈폴</span></div>
+                    <div className="brand-item"><img src="/icons/비이커.webp" alt="BEAKER" /><span>비이커</span></div>
+                    <div className="brand-item"><img src="/icons/구호.webp" alt="KUHO" /><span>구호</span></div>
+                    <div className="brand-item"><img src="/icons/이세이미야케.webp" alt="ISSEY MIYAKE" /><span>이세이미야케</span></div>
+                    <div className="brand-item"><img src="/icons/띠어리.webp" alt="Theory" /><span>띠어리</span></div>
+                    <div className="brand-item"><img src="/icons/꼼데가르송.webp" alt="COMME des GARCONS" /><span>꼼데가르송</span></div>
+                    <div className="brand-item"><img src="/icons/파타고니아.webp" alt="patagonia" /><span>파타고니아</span></div>
+                    <div className="brand-item"><img src="/icons/코스.webp" alt="COS" /><span>코스</span></div>
                   </React.Fragment>
                 ))}
               </div>
@@ -151,7 +94,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Event Banner Section */}
+        {/* === 이벤트 배너 === */}
         <section className="event-banner">
           <div className="container">
             <h2 className="section-title">이벤트</h2>
@@ -181,7 +124,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Product Grid Section */}
+          {/* Product Grid Section */}
         <section className="product-section">
           <div className="container">
             <div className="section-header">
@@ -448,8 +391,9 @@ export default function Home() {
           </div>
         </section>
       </main>
+    
 
-      {/* Footer */}
+      {/* === Footer === */}
       <footer className="footer">
         <div className="container">
           <div className="footer-top">
@@ -457,13 +401,8 @@ export default function Home() {
               <Link to="/company">회사소개</Link>
               <Link to="/terms">이용약관</Link>
               <Link to="/privacy">개인정보 처리방침</Link>
-              <Link to="/email-policy">이메일무단수집거부</Link>
-              <Link to="/video-policy">영상정보처리기기운영방침</Link>
               <Link to="/help">고객센터</Link>
-              <Link to="/partnership">제휴/광고</Link>
               <Link to="/notice">공지사항</Link>
-              <Link to="/vendor">입점문의</Link>
-              <Link to="/bulk-order">단체주문</Link>
             </div>
           </div>
 
@@ -473,11 +412,7 @@ export default function Home() {
               <p>주소: 서울특별시 강남구 남부순환로 2806(도곡동)</p>
               <p>대표: 오세철 외 2명</p>
               <p>사업자 등록번호: 101-86-43805</p>
-              <p>통신판매업 신고번호: 2015-서울강남-02866</p>
-              <p>KG이니시스 구매안전(에스크로)서비스: 서비스 가입사실 확인</p>
-              <p>고객상담실: 평일 10시-17시 (점심시간 12시-13시, 주말 및 공휴일 휴무)</p>
-              <p>대표전화: 1599-0007(전국) 080-700-1472(수신자부담)</p>
-              <p>이메일: <a href="mailto:webmaster@ssfshop.com">webmaster@ssfshop.com</a></p>
+              <p>대표전화: 1599-0007</p>
             </div>
 
             <div className="footer-bottom">
