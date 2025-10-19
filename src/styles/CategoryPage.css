@@ -1,4 +1,9 @@
-.product-list-page {
+/*
+ * Category Page Styles
+ * 통합된 카테고리 페이지 스타일 (이전 WomenMain.css, ProductList.css 통합)
+ */
+
+.category-page {
   background: var(--color-white);
   min-height: 100vh;
   padding-bottom: 80px;
@@ -35,14 +40,17 @@
 
 /* Page Header */
 .page-header {
-  margin-bottom: 30px;
+  margin-bottom: 0;
+  padding-bottom: 30px;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .page-title {
-  font-size: 32px;
+  font-size: 28px;
   font-weight: var(--font-weight-bold);
   color: var(--text-primary);
   margin: 0;
+  text-align: left;
 }
 
 .page-title .count {
@@ -52,7 +60,7 @@
   margin-left: 8px;
 }
 
-/* Brand Logos Section */
+/* Brand Logos Section (ProductList 전용) */
 .brand-logos-section {
   display: flex;
   gap: 20px;
@@ -88,12 +96,17 @@
 .category-tabs {
   display: flex;
   gap: 0;
-  border-bottom: 2px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
   margin-bottom: 30px;
+  margin-top: 30px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  overflow-y: hidden;
+  justify-content: flex-start;
 }
 
-.tab {
-  padding: 14px 24px;
+.category-tabs .tab {
+  padding: 14px 10px;
   background: none;
   border: none;
   cursor: pointer;
@@ -102,18 +115,20 @@
   font-weight: var(--font-weight-medium);
   transition: all 0.2s ease;
   position: relative;
+  text-decoration: none;
+  white-space: nowrap;
 }
 
-.tab:hover {
+.category-tabs .tab:hover {
   color: var(--text-primary);
 }
 
-.tab.active {
+.category-tabs .tab.active {
   color: var(--text-primary);
   font-weight: var(--font-weight-bold);
 }
 
-.tab.active::after {
+.category-tabs .tab.active::after {
   content: "";
   position: absolute;
   bottom: -2px;
@@ -126,16 +141,18 @@
 /* Filter Section */
 .filter-section {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   margin-bottom: 30px;
   padding-bottom: 20px;
   border-bottom: 1px solid var(--border-color);
+  gap: 16px;
 }
 
 .filter-buttons {
   display: flex;
   gap: 8px;
+  flex: 1;
 }
 
 .filter-dropdown {
@@ -188,7 +205,7 @@
   border-color: var(--text-primary);
 }
 
-/* Product Grid */
+/* Product Grid - 상세한 그리드 스타일 */
 .product-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -202,15 +219,61 @@
   flex-direction: column;
   background: var(--color-white);
   transition: transform 0.2s ease;
+  cursor: pointer;
 }
 
 .product-card:hover {
   transform: translateY(-4px);
 }
 
+.product-card > img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  margin-bottom: 12px;
+}
+
+.product-card h4 {
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+  margin: 0 0 6px 0;
+  line-height: 1.4;
+}
+
+.product-card .desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0 0 8px 0;
+  line-height: 1.4;
+}
+
+.product-card .price {
+  font-size: 15px;
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+/* Product Thumb (legacy - for other pages) */
+.product-thumb {
+  width: 100%;
+  cursor: pointer;
+}
+
+.product-thumb img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
 .product-image-link {
   text-decoration: none;
   display: block;
+  cursor: pointer;
 }
 
 .product-image-wrapper {
@@ -224,7 +287,6 @@
 }
 
 .product-image {
-  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
@@ -238,9 +300,6 @@
 }
 
 .wishlist-btn {
-  position: absolute;
-  bottom: 12px;
-  right: 12px;
   width: 36px;
   height: 36px;
   background: var(--color-white);
@@ -250,14 +309,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease;
   color: var(--text-tertiary);
-}
-
-.wishlist-btn:hover {
-  transform: scale(1.1);
-  color: var(--primary-color);
 }
 
 .wishlist-btn svg {
@@ -296,12 +349,6 @@
 
 .product-name:hover {
   color: var(--primary-color);
-}
-
-.product-image-link {
-  text-decoration: none;
-  display: block;
-  cursor: pointer;
 }
 
 .product-price {
@@ -464,15 +511,9 @@
     font-size: 16px;
   }
 
-  .category-tabs {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .tab {
+  .category-tabs .tab {
     padding: 12px 16px;
     font-size: 14px;
-    white-space: nowrap;
   }
 
   .filter-btn {

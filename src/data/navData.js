@@ -3,6 +3,7 @@
 
 export const NAV = {
   women: [
+    { label: "전체", to: "/women" },
     { label: "신상품", to: "/women/new" },
     { label: "아우터", to: "/women/outer" },
     { label: "재킷", to: "/women/jacket" },

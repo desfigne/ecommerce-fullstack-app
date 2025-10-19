@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { Link, useParams, useLocation, useHistory } from "react-router-dom";
-import "./ProductList.css";
+import "../styles/CategoryPage.css";
 
 export default function ProductList() {
   const location = useLocation();
@@ -382,7 +382,7 @@ export default function ProductList() {
   };
 
   return (
-    <div className="product-list-page">
+    <div className="category-page">
       {/* Breadcrumb */}
       <div className="breadcrumb">
         <div className="container">
