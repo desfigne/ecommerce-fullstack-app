@@ -8,7 +8,6 @@
   --primary:#7F39FB;
   --primary-weak:#ede7ff;
   --shadow:0 6px 24px rgba(0,0,0,.06);
-  --radius:16px;
 }
 .menu{
   background:var(--menu-bg);
@@ -26,14 +25,17 @@
 }
 .menu-header h1{
   margin:0;
-  font-size:36px;
+  font-size: var(--font-4xl);
+  font-weight: var(--font-weight-bold);
   letter-spacing:-.02em;
   color:var(--text-strong);
+  line-height: var(--leading-tight);
 }
 .menu-header p{
   margin:10px 0 0;
-  font-size:15px;
+  font-size: var(--font-base);
   color:var(--muted);
+  line-height: var(--leading-normal);
 }
 .menu-grid{
   display:grid;
@@ -43,7 +45,7 @@
 .menu-group{
   background:var(--card-bg);
   border:1px solid var(--line);
-  border-radius:var(--radius);
+  border-radius:var(--radius-xl);
   padding:22px 22px 18px;
   box-shadow:var(--shadow);
   transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
@@ -70,10 +72,11 @@
   align-items:center;
   gap:10px;
   margin:2px 0 14px;
-  font-size:18px;
-  font-weight:800;
+  font-size: var(--font-md);
+  font-weight: var(--font-weight-bold);
   letter-spacing:-.02em;
   color:var(--text-strong);
+  line-height: var(--leading-tight);
 }
 .menu-group-title::after{
   content:"";
@@ -98,21 +101,23 @@
   width:max-content;
   max-width:100%;
   padding:8px 12px;
-  border-radius:999px;
+  border-radius:var(--radius-full);
   border:1px solid transparent;
   background:#fafafa;
   color:var(--text);
   text-decoration:none;
-  font-size:14px;
+  font-size: var(--font-sm);
+  font-weight: var(--font-weight-normal);
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
   transition:background .18s ease,color .18s ease,border-color .18s ease,transform .18s ease;
   position:relative;
+  line-height: var(--leading-normal);
 }
 .menu-link::after{
   content:"↗";
-  font-size:12px;
+  font-size: var(--font-xs);
   transform:translateX(-4px);
   opacity:0;
   transition:transform .18s ease,opacity .18s ease;
@@ -135,7 +140,7 @@
 }
 @media(max-width:992px){
   .menu{padding:56px 14px 80px;}
-  .menu-header h1{font-size:32px;}
+  .menu-header h1{font-size: var(--font-3xl);}
   .menu-list{grid-template-columns:repeat(2,minmax(0,1fr));}
 }
 @media(max-width:768px){
@@ -143,7 +148,7 @@
   .menu-group{padding:18px 18px 14px;}
 }
 @media(max-width:560px){
-  .menu-header h1{font-size:28px;}
-  .menu-header p{font-size:14px;}
+  .menu-header h1{font-size: var(--font-2xl);}
+  .menu-header p{font-size: var(--font-sm);}
   .menu-list{grid-template-columns:1fr;gap:8px;}
 }

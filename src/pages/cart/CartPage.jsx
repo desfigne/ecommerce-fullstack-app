@@ -23,6 +23,8 @@ export default function CartPage() {
   const saveCart = (next) => {
     setCart(next);
     localStorage.setItem("cart", JSON.stringify(next));
+    // 장바구니 업데이트 이벤트 발생 (Header의 카운트 업데이트용)
+    window.dispatchEvent(new Event("cartUpdated"));
   };
 
   const toggleOne = (id) => setSelected(prev => ({ ...prev, [id]: !prev[id] }));

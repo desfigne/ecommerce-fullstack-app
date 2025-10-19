@@ -20,7 +20,7 @@ export default function ProductThumb({ product }) {
   };
 
   return (
-    <div className="product-thumb" onClick={goDetail} style={{ cursor: "pointer" }}>
+    <div className="product-thumb" onClick={goDetail}>
       <img src={product.image || product.img} alt={product.name} />
     </div>
   );

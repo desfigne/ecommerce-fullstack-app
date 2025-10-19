@@ -1,0 +1,77 @@
+/* Checkout Page Styles */
+
+/* Order Items Container */
+.order-items-container {
+  text-align: left;
+  margin-bottom: 18px;
+}
+
+/* Order Items Header */
+.order-items-header {
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing-sm);
+}
+
+/* Order Items Grid */
+.order-items-grid {
+  display: grid;
+  gap: 10px;
+}
+
+/* Order Item Row */
+.order-item-row {
+  display: grid;
+  grid-template-columns: 60px 1fr 140px;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Order Item Image */
+.order-item-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+}
+
+/* Order Item Name */
+.order-item-name {
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Order Item Details */
+.order-item-details {
+  color: var(--text-light);
+  font-size: var(--font-xs);
+}
+
+/* Order Item Price */
+.order-item-price {
+  text-align: right;
+  font-weight: var(--font-weight-bold);
+}
+
+/* Order Total Container */
+.order-total-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-color);
+}
+
+/* Order Total Label */
+.order-total-label {
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Order Total Amount */
+.order-total-amount {
+  font-weight: var(--font-weight-bold);
+}
+
+/* Empty Order Message */
+.empty-order-message {
+  margin-bottom: 18px;
+}

@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useHistory, useLocation, Link } from "react-router-dom";
-import "../../styles/Page.css";
+import "../Page.css";
+import "./Checkout.css";
 
 export default function Checkout() {
   const history = useHistory();
@@ -115,6 +116,8 @@ export default function Checkout() {
       const remain = origin.filter(i => !paidKeys.has(`${i.product?.id}-${i.size || "Free"}`));
       localStorage.setItem("cart", JSON.stringify(remain));
       localStorage.removeItem("cartCheckout");
+      // 장바구니 업데이트 이벤트 발생 (Header의 카운트 업데이트용)
+      window.dispatchEvent(new Event("cartUpdated"));
 
       // 단일 결제 경로 정리
       localStorage.removeItem("pendingOrder");
@@ -137,29 +140,29 @@ export default function Checkout() {
         {!showQR ? (
           <>
             {items.length > 0 ? (
-              <div style={{ textAlign: "left", marginBottom: 18 }}>
-                <div style={{ fontWeight: 700, marginBottom: 8 }}>주문 상품</div>
-                <div style={{ display: "grid", gap: 10 }}>
+              <div className="order-items-container">
+                <div className="order-items-header">주문 상품</div>
+                <div className="order-items-grid">
                   {items.map((it, idx) => (
-                    <div key={idx} style={{ display: "grid", gridTemplateColumns: "60px 1fr 140px", gap: 10, alignItems: "center" }}>
-                      <img src={it.product.image} alt={it.product.name} style={{ width: 60, height: 60, objectFit: "cover", borderRadius: 8, border: "1px solid #eee" }} />
+                    <div key={idx} className="order-item-row">
+                      <img src={it.product.image} alt={it.product.name} className="order-item-image" />
                       <div>
-                        <div style={{ fontWeight: 600 }}>{it.product.name || "상품"}</div>
-                        <div style={{ color: "#555", fontSize: 13 }}>사이즈 {it.size || "-" } · 수량 {it.qty}</div>
+                        <div className="order-item-name">{it.product.name || "상품"}</div>
+                        <div className="order-item-details">사이즈 {it.size || "-" } · 수량 {it.qty}</div>
                       </div>
-                      <div style={{ textAlign: "right", fontWeight: 700 }}>
+                      <div className="order-item-price">
                         ₩{(Number(it.product.price||0)*Number(it.qty||1)).toLocaleString()}
                       </div>
                     </div>
                   ))}
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12, paddingTop: 10, borderTop: "1px solid #eee" }}>
-                  <span style={{ fontWeight: 600 }}>총 결제금액</span>
-                  <span style={{ fontWeight: 800 }}>₩{total.toLocaleString()}</span>
+                <div className="order-total-container">
+                  <span className="order-total-label">총 결제금액</span>
+                  <span className="order-total-amount">₩{total.toLocaleString()}</span>
                 </div>
               </div>
             ) : (
-              <div style={{ marginBottom: 18 }}>주문 정보가 없습니다. <Link to="/">홈으로</Link></div>
+              <div className="empty-order-message">주문 정보가 없습니다. <Link to="/">홈으로</Link></div>
             )}
 
             <h2>결제수단 선택</h2>

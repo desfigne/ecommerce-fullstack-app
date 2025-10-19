@@ -1,6 +1,7 @@
 import React from "react";
 import { HashRouter as Router, Route, Switch } from "react-router-dom";
 import Header from "./components/Header";
+import Footer from "./components/Footer";
 import Home from "./pages/home/Home";
 import Menu from "./pages/menu/Menu";
 import Login from "./pages/auth/Login";
@@ -74,6 +75,10 @@ import OutletShoes from "./pages/outlet/OutletShoes";
 import OutletSports from "./pages/outlet/OutletSports";
 import OutletGolf from "./pages/outlet/OutletGolf";
 import OutletLife from "./pages/outlet/OutletLife";
+import MyPage from "./pages/mypage/MyPage";
+import HelpPage from "./pages/help/HelpPage";
+import CompanyPage from "./pages/company/CompanyPage";
+import PolicyPage from "./pages/policy/PolicyPage";
 
 function App() {
   return (
@@ -85,6 +90,10 @@ function App() {
         <Route path="/login" component={Login} />
         <Route path="/signup" component={Signup} />
         <Route path="/account/recovery" component={AccountRecovery} />
+        <Route path="/mypage" component={MyPage} />
+        <Route path="/help" component={HelpPage} />
+        <Route path="/company" component={CompanyPage} />
+        <Route path="/policy" component={PolicyPage} />
 
         <Route path="/orders" component={MyOrders} />
         <Route path="/admin/orders" component={AdminOrders} />
@@ -167,6 +176,7 @@ function App() {
         <Route path="/outlet/golf" component={OutletGolf} />
         <Route path="/outlet/life" component={OutletLife} />
       </Switch>
+      <Footer />
     </Router>
   );
 }

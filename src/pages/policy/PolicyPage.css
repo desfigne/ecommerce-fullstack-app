@@ -1,15 +1,162 @@
+/* 정책 페이지 */
 .policy-page {
-  padding: 60px 16px;
+  background: var(--bg-secondary);
+  min-height: 100vh;
+  padding: 60px var(--container-padding);
 }
 
-.policy-page h1 {
-  font-size: 26px;
-  font-weight: bold;
-  margin-bottom: 20px;
+.policy-container {
+  max-width: 900px;
+  margin: 0 auto;
 }
 
-.policy-page p {
-  font-size: 14px;
-  color: #666;
-  line-height: 1.6;
+/* 타이틀 */
+.policy-title {
+  font-size: var(--font-4xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  text-align: center;
+  margin-bottom: 40px;
+  line-height: var(--leading-tight);
+}
+
+/* 탭 */
+.policy-tabs {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+  justify-content: center;
+}
+
+.policy-tab {
+  padding: var(--spacing-md) var(--spacing-xl);
+  background: var(--bg-primary);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-md);
+  font-size: var(--font-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: var(--leading-normal);
+}
+
+.policy-tab:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.policy-tab.active {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: var(--color-white);
+}
+
+/* 콘텐츠 */
+.policy-content {
+  background: var(--bg-primary);
+  padding: 40px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.policy-content h2 {
+  font-size: var(--font-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-md);
+  line-height: var(--leading-tight);
+}
+
+.policy-date {
+  font-size: var(--font-sm);
+  color: var(--text-tertiary);
+  margin-bottom: 40px;
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 2px solid var(--border-light);
+  line-height: var(--leading-normal);
+}
+
+.policy-content section {
+  margin-bottom: 40px;
+}
+
+.policy-content section:last-child {
+  margin-bottom: 0;
+}
+
+.policy-content h3 {
+  font-size: var(--font-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-md);
+  line-height: var(--leading-tight);
+}
+
+.policy-content p {
+  font-size: var(--font-base);
+  color: var(--text-secondary);
+  line-height: var(--leading-loose);
+  margin-bottom: var(--spacing-md);
+}
+
+.policy-content ul {
+  list-style: none;
+  padding-left: 0;
+  margin: var(--spacing-md) 0;
+}
+
+.policy-content ul li {
+  position: relative;
+  padding-left: var(--spacing-lg);
+  margin-bottom: var(--spacing-sm);
+  font-size: var(--font-base);
+  color: var(--text-secondary);
+  line-height: var(--leading-relaxed);
+}
+
+.policy-content ul li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--primary-color);
+  font-weight: var(--font-weight-bold);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .policy-page {
+    padding: 40px var(--spacing-md);
+  }
+
+  .policy-title {
+    font-size: var(--font-2xl);
+  }
+
+  .policy-tabs {
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .policy-tab {
+    padding: 10px var(--spacing-lg);
+    font-size: var(--font-base);
+  }
+
+  .policy-content {
+    padding: var(--spacing-lg);
+  }
+
+  .policy-content h2 {
+    font-size: var(--font-xl);
+  }
+
+  .policy-content h3 {
+    font-size: var(--font-md);
+  }
+
+  .policy-content p,
+  .policy-content ul li {
+    font-size: var(--font-sm);
+  }
 }

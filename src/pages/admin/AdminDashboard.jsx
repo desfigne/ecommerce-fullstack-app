@@ -13,7 +13,12 @@ export default function AdminDashboard() {
   const auth = getAuth();
 
   useEffect(() => {
-    if (!auth || auth.role !== "admin") history.replace("/login");
+    if (!auth || auth.role !== "admin") {
+      window.location.href = "/#/login";
+    } else {
+      // 관리자인 경우 MyPage로 리다이렉트
+      history.replace({ pathname: "/mypage", state: { activeTab: "admin-users" } });
+    }
   }, [auth, history]);
 
   const refresh = () => {
@@ -65,7 +70,7 @@ export default function AdminDashboard() {
         <div className="admin-title">관리자 대시보드</div>
         <div className="admin-actions">
           <Link className="btn" to="/">홈으로</Link>
-          <Link className="btn" to="/admin/orders">주문 관리</Link>
+          <Link className="btn" to={{ pathname: "/mypage", state: { activeTab: "admin-orders" } }}>주문 관리</Link>
           <button className="btn" onClick={onLogout}>관리자 로그아웃</button>
         </div>
       </div>
