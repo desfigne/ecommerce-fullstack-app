@@ -4,12 +4,12 @@ import ProductThumb from "../../components/ProductThumb";
 
 function OutletWomen() {
   const products = [
-    { id: 1, name: "", desc: "", price: "", img: "/images/아울렛/여성/outlet_women1.webp" },
-    { id: 2, name: "", desc: "", price: "", img: "/images/아울렛/여성/outlet_women2.webp" },
-    { id: 3, name: "", desc: "", price: "", img: "/images/아울렛/여성/outlet_women3.webp" },
-    { id: 4, name: "", desc: "", price: "", img: "/images/아울렛/여성/outlet_women4.webp" },
-    { id: 5, name: "", desc: "", price: "", img: "/images/아울렛/여성/outlet_women5.webp" },
-    { id: 6, name: "", desc: "", price: "", img: "/images/아울렛/여성/outlet_women6.webp" },
+    { id: 1, name: "", desc: "", price: "", img: "/images/outlet/women/outlet_women1.webp" },
+    { id: 2, name: "", desc: "", price: "", img: "/images/outlet/women/outlet_women2.webp" },
+    { id: 3, name: "", desc: "", price: "", img: "/images/outlet/women/outlet_women3.webp" },
+    { id: 4, name: "", desc: "", price: "", img: "/images/outlet/women/outlet_women4.webp" },
+    { id: 5, name: "", desc: "", price: "", img: "/images/outlet/women/outlet_women5.webp" },
+    { id: 6, name: "", desc: "", price: "", img: "/images/outlet/women/outlet_women6.webp" },
   ];
 
   return (

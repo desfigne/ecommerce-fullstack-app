@@ -7,6 +7,17 @@ export default function Home() {
   const [activeProductTab, setActiveProductTab] = useState(0);
   const [activeRankingTab, setActiveRankingTab] = useState(0);
   const [brandPage, setBrandPage] = useState(0);
+
+  // ---- NEW: 위시리스트 상태 (id 셋만 캐시해서 빠르게 렌더) ----
+  const [wishIds, setWishIds] = useState(() => {
+    try {
+      const w = JSON.parse(localStorage.getItem("wishlist")) || [];
+      return new Set(w.map((it) => it.id));
+    } catch {
+      return new Set();
+    }
+  });
+
   const totalPages = 3; // 9장 / 3장씩
 
   const slides = useMemo(
@@ -36,6 +47,88 @@ export default function Home() {
 
   const productCategories = ["니트 카디건", "백 & 슈즈", "쥬얼리 & 액세서리", "뷰티 & 향수", "코스메틱", "키즈 & 베이비"];
   const rankingCategories = ["여성", "남성", "키즈", "럭셔리", "백&슈즈", "스포츠", "골프", "뷰티", "라이프"];
+
+  // ---- NEW: 홈 상품 데이터 (아이디/가격/할인/이미지 포함) ----
+  const homeProducts = useMemo(
+    () => [
+      {
+        id: "P-ANGGAE-1",
+        brand: "anggae",
+        name: "Smocked Knit Cardigan - Grey",
+        image: "/images/3207359177.jpeg",
+        price: 159000,
+      },
+      {
+        id: "P-8SEC-1",
+        brand: "8 seconds",
+        name: "울100 카디건 - 카키",
+        image: "/images/1010207927.jpeg",
+        price: 59900,
+        originalPrice: 69900,
+        discountLabel: "10%",
+      },
+      {
+        id: "P-MAIA-1",
+        brand: "Maia",
+        name: "Two-Way Cardigan - French Roast",
+        image: "/images/3793950654.jpeg",
+        priceLabel: "품절",
+      },
+      {
+        id: "P-320S-1",
+        brand: "320Showroom",
+        name: "V-Neck Button-Up Wool Alpaca Knit Cardigan",
+        image: "/images/3826030000.jpeg",
+        price: 64800,
+        originalPrice: 79000,
+        discountLabel: "10%",
+      },
+      {
+        id: "P-HANE-1",
+        brand: "HANE",
+        name: "플라테카드 자켓 울 니트 가디건_Charcoal",
+        image: "/images/635366670.jpeg",
+        price: 118800,
+        originalPrice: 156000,
+        discountLabel: "26%",
+      },
+    ],
+    []
+  );
+
+  // ---- NEW: 위시리스트 헬퍼 ----
+  const isWishlisted = (id) => wishIds.has(id);
+
+  const toggleWishlist = (product) => {
+    try {
+      let list = JSON.parse(localStorage.getItem("wishlist")) || [];
+      const exists = list.some((it) => it.id === product.id);
+
+      if (exists) {
+        list = list.filter((it) => it.id !== product.id);
+      } else {
+        const payload = {
+          id: product.id,
+          name: product.name,
+          brand: product.brand,
+          image: product.image,
+          price: product.price ?? null,
+          originalPrice: product.originalPrice ?? null,
+          priceLabel: product.priceLabel ?? null,
+          discountLabel: product.discountLabel ?? null,
+        };
+        list.push(payload);
+      }
+
+      localStorage.setItem("wishlist", JSON.stringify(list));
+      // 로컬 상태도 즉시 반영
+      setWishIds(new Set(list.map((it) => it.id)));
+      // 헤더 카운트 갱신용 커스텀 이벤트
+      try { window.dispatchEvent(new Event("wishlistUpdated")); } catch {}
+    } catch (e) {
+      console.error("Failed to update wishlist", e);
+    }
+  };
 
   // 브랜드 데이터 (총 35개 브랜드)
   const brandData = [
@@ -92,6 +185,9 @@ export default function Home() {
   const handleBrandNext = () => {
     setBrandPage((prev) => (prev + 1) % totalBrandPages);
   };
+
+  // 가격 포맷
+  const formatPrice = (n) => (typeof n === "number" ? n.toLocaleString() : n);
 
   return (
     <>
@@ -205,11 +301,13 @@ export default function Home() {
           </div>
         </section>
 
-          {/* Product Grid Section */}
+        {/* Product Grid Section */}
         <section className="product-section">
           <div className="container">
             <div className="section-header">
               <h2 className="section-title">고마움과 안부, 마음껏 전할 시간</h2>
+
+              {/* ---- NEW: 위시리스트 페이지로 가는 링크 ---- */}
               <div className="category-tabs">
                 {productCategories.map((category, index) => (
                   <button
@@ -220,105 +318,52 @@ export default function Home() {
                     {category}
                   </button>
                 ))}
+                <Link to="/wishlist" className="tab-btn" style={{ textDecoration: "none" }}>
+                  위시리스트 보러가기 →
+                </Link>
               </div>
             </div>
 
             <div className="product-grid">
-              <div className="product-card">
-                <div className="product-image">
-                  <img src="/images/3207359177.jpeg" alt="anggae Smocked Knit Cardigan" />
-                  <button className="wishlist-btn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="currentColor" strokeWidth="2"/>
-                    </svg>
-                  </button>
-                </div>
-                <div className="product-info">
-                  <span className="brand">anggae</span>
-                  <h3 className="product-name">Smocked Knit Cardigan - Grey</h3>
-                  <div className="price">
-                    <span className="current-price">159,000</span>
+              {homeProducts.map((p) => {
+                const wished = isWishlisted(p.id);
+                return (
+                  <div className="product-card" key={p.id}>
+                    <div className="product-image">
+                      <img src={p.image} alt={p.name} />
+                      {/* ---- NEW: 하트 버튼 (토글) ---- */}
+                      <button
+                        className={`wishlist-btn ${wished ? "active" : ""}`}
+                        aria-pressed={wished}
+                        aria-label={wished ? "위시에서 제거" : "위시에 추가"}
+                        onClick={() => toggleWishlist(p)}
+                        title={wished ? "위시에 담김" : "위시에 담기"}
+                      >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                          <path
+                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            // 활성화 시 하트 채우기
+                            fill={wished ? "currentColor" : "none"}
+                          />
+                        </svg>
+                      </button>
+                      {p.discountLabel && <span className="discount-badge">{p.discountLabel}</span>}
+                    </div>
+                    <div className="product-info">
+                      <span className="brand">{p.brand}</span>
+                      <h3 className="product-name">{p.name}</h3>
+                      <div className="price">
+                        {p.originalPrice && <span className="original-price">{formatPrice(p.originalPrice)}</span>}
+                        <span className="current-price">
+                          {p.priceLabel ? p.priceLabel : formatPrice(p.price)}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-
-              <div className="product-card">
-                <div className="product-image">
-                  <img src="/images/1010207927.jpeg" alt="8 seconds" />
-                  <button className="wishlist-btn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="currentColor" strokeWidth="2"/>
-                    </svg>
-                  </button>
-                  <span className="discount-badge">10%</span>
-                </div>
-                <div className="product-info">
-                  <span className="brand">8 seconds</span>
-                  <h3 className="product-name">울100 카디건 - 카키</h3>
-                  <div className="price">
-                    <span className="original-price">69,900</span>
-                    <span className="current-price">59,900</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="product-card">
-                <div className="product-image">
-                  <img src="/images/3793950654.jpeg" alt="Maia" />
-                  <button className="wishlist-btn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="currentColor" strokeWidth="2"/>
-                    </svg>
-                  </button>
-                </div>
-                <div className="product-info">
-                  <span className="brand">Maia</span>
-                  <h3 className="product-name">Two-Way Cardigan - French Roast</h3>
-                  <div className="price">
-                    <span className="current-price">품절</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="product-card">
-                <div className="product-image">
-                  <img src="/images/3826030000.jpeg" alt="320Showroom" />
-                  <button className="wishlist-btn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="currentColor" strokeWidth="2"/>
-                    </svg>
-                  </button>
-                  <span className="discount-badge">10%</span>
-                </div>
-                <div className="product-info">
-                  <span className="brand">320Showroom</span>
-                  <h3 className="product-name">V-Neck Button-Up Wool Alpaca Knit Cardigan</h3>
-                  <div className="price">
-                    <span className="original-price">79,000</span>
-                    <span className="current-price">64,800</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="product-card">
-                <div className="product-image">
-                  <img src="/images/635366670.jpeg" alt="HANE" />
-                  <button className="wishlist-btn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="currentColor" strokeWidth="2"/>
-                    </svg>
-                  </button>
-                  <span className="discount-badge">26%</span>
-                </div>
-                <div className="product-info">
-                  <span className="brand">HANE</span>
-                  <h3 className="product-name">플라테카드 자켓 울 니트 가디건_Charcoal</h3>
-                  <div className="price">
-                    <span className="original-price">156,000</span>
-                    <span className="current-price">118,800</span>
-                  </div>
-                </div>
-              </div>
+                );
+              })}
             </div>
           </div>
         </section>

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import "../../styles/Auth.css";
 import { Link, useLocation, useHistory } from "react-router-dom";
 import { loginApi } from "../../api/auth";
+import NaverLoginButton from "../../components/auth/NaverLoginButton";
+import KakaoLoginButton from "../../components/auth/KakaoLoginButton";
 
 export default function Login() {
   const location = useLocation();
@@ -116,7 +118,7 @@ export default function Login() {
           <input
             type="text"
             name="id"
-            placeholder="아이디"
+            placeholder="이메일"
             value={form.id}
             onChange={onChange}
             required
@@ -171,14 +173,8 @@ export default function Login() {
         </div>
 
         <div className="sns-login">
-          <button type="button" className="sns-btn sns-kakao">
-            <span className="sns-icon">💬</span>
-            카카오 로그인
-          </button>
-          <button type="button" className="sns-btn sns-naver">
-            <span className="sns-icon">N</span>
-            네이버 로그인
-          </button>
+          <KakaoLoginButton />
+          <NaverLoginButton />
         </div>
       </div>
     </div>

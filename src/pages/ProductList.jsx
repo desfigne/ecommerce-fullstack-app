@@ -1,28 +1,291 @@
-import React, { useState, useMemo } from "react";
-import { Link, useParams, useLocation, useHistory } from "react-router-dom";
+// src/pages/ProductList.jsx
+import React, { useMemo, useState } from "react";
+import { Link, useLocation, useHistory } from "react-router-dom";
 import "../styles/CategoryPage.css";
+
+// 가격 → 숫자
+const toNumberPrice = (val) =>
+  typeof val === "number" ? val : Number(String(val).replace(/[^\d]/g, "")) || 0;
+
+/** 이미지 후보 경로 생성기 (안전장치)
+ * - PUBLIC_URL + encodeURI(원본)
+ * - PUBLIC_URL + 원본(비인코딩)
+ * - PUBLIC_URL + 파일명 소문자화
+ * - 루트(/) + encodeURI(원본)
+ * - 루트(/) + 파일명 소문자화
+ * - 마지막: placeholder
+ */
+const buildImageCandidates = (raw) => {
+  const PUBLIC = process.env.PUBLIC_URL || "";
+  const withLeadingSlash = raw.startsWith("/") ? raw : `/${raw}`;
+
+  // 파일명/확장자 분리해 소문자 변형
+  const parts = withLeadingSlash.split("/");
+  const file = parts.pop() || "";
+  const lowerFile = file.toLowerCase();
+  const lowerPath = [...parts, lowerFile].join("/");
+
+  const encoded = encodeURI(withLeadingSlash);
+  const encodedLower = encodeURI(lowerPath);
+
+  const candidates = [
+    `${PUBLIC}${encoded}`,
+    `${PUBLIC}${withLeadingSlash}`,     // 인코딩 없이
+    `${PUBLIC}${encodedLower}`,         // 파일명 소문자
+    `${PUBLIC}${lowerPath}`,            // 소문자 비인코딩
+    encoded,                            // PUBLIC_URL 없이도 시도
+    withLeadingSlash,                   // 비인코딩 루트
+  ];
+
+  // 중복 제거
+  return Array.from(new Set(candidates));
+};
+
+/** 이미지 src 계산 (http/https는 그대로, 그 외는 후보 배열 생성)
+ *  - 반환: { src, candidates }
+ */
+const srcOf = (imgOrProduct) => {
+  const raw =
+    typeof imgOrProduct === "string"
+      ? imgOrProduct
+      : imgOrProduct?.image || imgOrProduct?.img || "";
+
+  if (!raw) {
+    return {
+      src: `${process.env.PUBLIC_URL}/images/placeholder.png`,
+      candidates: [],
+    };
+  }
+  if (/^https?:\/\//i.test(raw)) {
+    return { src: raw, candidates: [] };
+  }
+  const candidates = buildImageCandidates(raw.replace(/\/{2,}/g, "/"));
+  return { src: candidates[0], candidates: candidates.slice(1) };
+};
+
+// ===== 하드코딩: 로컬 이미지 기반 상품들 =====
+const local_women_outer = [
+  {
+    id: "women-outer-101",
+    brand: "SSF SHOP",
+    name: "베이지 캐주얼 자켓",
+    img: "/images/women/outer/women_outer1.webp",
+    desc: "데일리로 활용하기 좋은 기본 아우터",
+    price: "₩129,000",
+    originalPrice: 159000,
+    discountRate: 10,
+    rating: 4.5,
+    reviewCount: 72,
+    wishCount: 320,
+    colors: ["beige", "black"],
+  },
+  {
+    id: "women-outer-102",
+    brand: "SSF SHOP",
+    name: "패턴 자켓",
+    img: "/images/women/outer/women_outer2.webp",
+    desc: "유니크한 감각으로 스트릿 패션에 적합",
+    price: "₩159,000",
+    originalPrice: 199000,
+    discountRate: 15,
+    rating: 4.4,
+    reviewCount: 51,
+    wishCount: 240,
+    colors: ["brown", "black"],
+  },
+  {
+    id: "women-outer-103",
+    brand: "SSF SHOP",
+    name: "블랙 라이더 자켓",
+    img: "/images/women/outer/women_outer3.webp",
+    desc: "시크한 무드의 포인트 아이템",
+    price: "₩189,000",
+    originalPrice: 219000,
+    discountRate: 10,
+    rating: 4.7,
+    reviewCount: 33,
+    wishCount: 410,
+    colors: ["black"],
+  },
+  {
+    id: "women-outer-104",
+    brand: "SSF SHOP",
+    name: "경량 패딩 자켓",
+    img: "/images/women/outer/women_outer4.webp",
+    desc: "가볍지만 따뜻한 간절기 필수템",
+    price: "₩99,000",
+    originalPrice: 129000,
+    discountRate: 20,
+    rating: 4.3,
+    reviewCount: 28,
+    wishCount: 180,
+    colors: ["black", "navy"],
+  },
+  {
+    id: "women-outer-105",
+    brand: "SSF SHOP",
+    name: "블랙 포켓 자켓",
+    img: "/images/women/outer/women_outer5.webp",
+    desc: "편안한 핏으로 스타일리시하게 연출 가능",
+    price: "₩149,000",
+    originalPrice: 169000,
+    discountRate: 10,
+    rating: 4.6,
+    reviewCount: 46,
+    wishCount: 265,
+    colors: ["black"],
+  },
+  {
+    id: "women-outer-106",
+    brand: "SSF SHOP",
+    name: "카키 오버핏 자켓",
+    img: "/images/women/outer/women_outer6.webp",
+    desc: "실용성과 멋을 동시에 갖춘 아이템",
+    price: "₩139,000",
+    originalPrice: 169000,
+    discountRate: 15,
+    rating: 4.5,
+    reviewCount: 39,
+    wishCount: 221,
+    colors: ["khaki", "beige"],
+  },
+];
+
+// 여성 ▸ 재킷
+const local_women_jacket = [
+  {
+    id: "women-jacket-201",
+    brand: "SSF SHOP",
+    name: "재킷 상품 1",
+    img: "/images/women/jacket/women_jacket1.webp",
+    desc: "스타일리시한 재킷",
+    price: "₩119,000",
+    originalPrice: 149000,
+    discountRate: 20,
+    rating: 4.5,
+    reviewCount: 23,
+    wishCount: 130,
+    colors: ["grey", "black"],
+  },
+  {
+    id: "women-jacket-202",
+    brand: "SSF SHOP",
+    name: "재킷 상품 2",
+    img: "/images/women/jacket/women_jacket2.webp",
+    desc: "스타일리시한 재킷",
+    price: "₩129,000",
+    originalPrice: 159000,
+    discountRate: 15,
+    rating: 4.4,
+    reviewCount: 18,
+    wishCount: 98,
+    colors: ["brown", "black"],
+  },
+  {
+    id: "women-jacket-203",
+    brand: "SSF SHOP",
+    name: "재킷 상품 3",
+    img: "/images/women/jacket/women_jacket3.webp",
+    desc: "스타일리시한 재킷",
+    price: "₩139,000",
+    originalPrice: 169000,
+    discountRate: 15,
+    rating: 4.6,
+    reviewCount: 30,
+    colors: ["black"],
+  },
+  {
+    id: "women-jacket-204",
+    brand: "SSF SHOP",
+    name: "재킷 상품 4",
+    img: "/images/women/jacket/women_jacket4.webp",
+    desc: "스타일리시한 재킷",
+    price: "₩149,000",
+    originalPrice: 179000,
+    discountRate: 15,
+    rating: 4.5,
+    reviewCount: 14,
+    colors: ["grey"],
+  },
+  {
+    id: "women-jacket-205",
+    brand: "SSF SHOP",
+    name: "재킷 상품 5",
+    img: "/images/women/jacket/women_jacket5.webp",
+    desc: "스타일리시한 재킷",
+    price: "₩159,000",
+    originalPrice: 199000,
+    discountRate: 20,
+    rating: 4.7,
+    reviewCount: 41,
+    wishCount: 260,
+    colors: ["black", "brown"],
+  },
+  {
+    id: "women-jacket-206",
+    brand: "SSF SHOP",
+    name: "재킷 상품 6",
+    img: "/images/women/jacket/women_jacket6.webp",
+    desc: "스타일리시한 재킷",
+    price: "₩169,000",
+    originalPrice: 209000,
+    discountRate: 20,
+    rating: 4.6,
+    reviewCount: 37,
+    colors: ["black", "grey"],
+  },
+];
+
+const local_women_knit = [];
+const local_women_shirt = [];
+const local_women_tshirt = [];
+const local_women_onepiece = [];
+const local_women_pants = [];
+const local_women_skirt = [];
+
+// (옵션) 외부 샘플
+const sampleProducts = [
+  {
+    id: 1,
+    brand: "BEAKER ORIGINAL",
+    name: "Women Bandana Pattern Quilted Jumper - Black",
+    img: "https://image.msscdn.net/images/goods_img/20231113/3658826/3658826_17077044817712_500.jpg",
+    desc: "Women Bandana Pattern Quilted Jumper",
+    price: "₩517,750",
+    originalPrice: 545000,
+    discountRate: 5,
+    rating: 4.5,
+    reviewCount: 64,
+    wishCount: 999,
+    colors: ["black", "navy"],
+  },
+];
 
 export default function ProductList() {
   const location = useLocation();
   const history = useHistory();
 
-  // URL 파싱: /women/outer -> category: women, subcategory: outer
-  const pathParts = location.pathname.split('/').filter(Boolean);
-  const category = pathParts[0] || 'women';
-  const subcategory = pathParts[1] || 'outer';
+  // ===== 경로 파싱: /women/outer, /search/키워드, /search?q=
+  const pathParts = location.pathname.split("/").filter(Boolean);
+  const first = pathParts[0] || "women";
+  const isSearchMode = first === "search";
+  const category = isSearchMode ? "" : first;
+  const subcategory = isSearchMode ? "" : pathParts[1] || "outer";
 
+  // 검색어 파싱
+  const searchKeyword = useMemo(() => {
+    if (!isSearchMode) return "";
+    const fromPath = pathParts[1] ? decodeURIComponent(pathParts[1]) : "";
+    const fromQuery = new URLSearchParams(location.search).get("q") || "";
+    return (fromPath || fromQuery || "").trim();
+  }, [isSearchMode, pathParts, location.search]);
+
+  // 상태
   const [activeTab, setActiveTab] = useState("전체");
-  const [selectedBrands, setSelectedBrands] = useState([]);
-  const [priceRange, setPriceRange] = useState([0, 1000000]);
-  const [selectedSizes, setSelectedSizes] = useState([]);
-  const [selectedColors, setSelectedColors] = useState([]);
   const [sortBy, setSortBy] = useState("인기상품순(전체)");
-  const [showBrandFilter, setShowBrandFilter] = useState(false);
-  const [showPriceFilter, setShowPriceFilter] = useState(false);
-  const [showSizeFilter, setShowSizeFilter] = useState(false);
-  const [showColorFilter, setShowColorFilter] = useState(false);
+  const [refresh, setRefresh] = useState(0); // 위시 토글 반영용
 
-  // 브랜드 데이터
+  // 브랜드 로고(디자인 유지용)
   const brandLogos = [
     { name: "아미", img: "/icons/brand_아미.png" },
     { name: "메종키츠네", img: "/icons/brand_메종키츠네.webp" },
@@ -35,23 +298,23 @@ export default function ProductList() {
     { name: "단톤", img: "/icons/brand_단톤.png" },
     { name: "가니", img: "/icons/brand_가니.png" },
     { name: "토리버치", img: "/icons/brand_토리버치.jpg" },
-    { name: "알투더블유", img: "/icons/brand_알투더블유.png" },
     { name: "라코스테", img: "/icons/brand_라코스테.png" },
-    { name: "울랄라", img: "/icons/brand_울랄라.png" },
-    { name: "세인트제임스", img: "/icons/brand_세인트제임스.webp" },
   ];
 
-  // 카테고리 정보
+  // 카테고리/탭 메타
   const categoryInfo = {
     women: { name: "여성", nameEn: "WOMEN" },
     men: { name: "남성", nameEn: "MEN" },
     kids: { name: "키즈", nameEn: "KIDS" },
     beauty: { name: "뷰티", nameEn: "BEAUTY" },
     sports: { name: "스포츠", nameEn: "SPORTS" },
+    life: { name: "라이프", nameEn: "LIFE" },
+    luxury: { name: "럭셔리", nameEn: "LUXURY" },
+    "bags-shoes": { name: "백&슈즈", nameEn: "BAGS & SHOES" },
+    outlet: { name: "아울렛", nameEn: "OUTLET" },
   };
 
   const subcategoryInfo = {
-    // Women
     outer: { name: "아우터", tabs: ["전체", "코트", "점퍼", "다운/패딩", "퍼"] },
     jacket: { name: "재킷/베스트", tabs: ["전체", "블레이저", "베스트", "라이더", "기타"] },
     knit: { name: "니트웨어", tabs: ["전체", "카디건", "니트", "베스트"] },
@@ -60,325 +323,161 @@ export default function ProductList() {
     onepiece: { name: "원피스", tabs: ["전체", "미니", "미디", "롱"] },
     pants: { name: "팬츠", tabs: ["전체", "청바지", "슬랙스", "레깅스", "기타"] },
     skirt: { name: "스커트", tabs: ["전체", "미니", "미디", "롱"] },
-    // Men
-    suit: { name: "정장", tabs: ["전체", "재킷", "팬츠", "세트"] },
-    // Kids
-    boy: { name: "남아", tabs: ["전체", "아우터", "상의", "하의", "세트"] },
-    girl: { name: "여아", tabs: ["전체", "아우터", "원피스", "상의", "하의"] },
-    baby: { name: "베이비", tabs: ["전체", "우주복", "상하복", "아우터"] },
-    // Beauty
-    skin: { name: "스킨케어", tabs: ["전체", "클렌저", "토너", "에센스", "크림"] },
-    makeup: { name: "메이크업", tabs: ["전체", "베이스", "아이", "립", "치크"] },
-    perfume: { name: "향수", tabs: ["전체", "여성향수", "남성향수", "유니섹스"] },
-    // Sports
-    outdoor: { name: "아웃도어", tabs: ["전체", "등산복", "캠핑", "용품"] },
-    running: { name: "러닝", tabs: ["전체", "의류", "신발", "용품"] },
-    yoga: { name: "요가", tabs: ["전체", "상의", "하의", "매트"] },
-    fitness: { name: "피트니스", tabs: ["전체", "의류", "용품"] },
-    tennis: { name: "테니스", tabs: ["전체", "의류", "라켓", "용품"] },
-    swim: { name: "수영", tabs: ["전체", "수영복", "수영모", "용품"] },
-    // Life
-    furniture: { name: "가구", tabs: ["전체", "침실", "거실", "주방"] },
-    pet: { name: "반려동물", tabs: ["전체", "사료", "용품", "의류"] },
-    car: { name: "자동차", tabs: ["전체", "액세서리", "용품"] },
   };
 
-  // 카테고리별 상품 데이터 생성 함수
+  // 로컬 묶음 테이블
+  const localByCategory = {
+    women: {
+      outer: local_women_outer,
+      jacket: local_women_jacket,
+      knit: local_women_knit,
+      shirt: local_women_shirt,
+      tshirt: local_women_tshirt,
+      onepiece: local_women_onepiece,
+      pants: local_women_pants,
+      skirt: local_women_skirt,
+    },
+  };
+
+  // 카테고리 페이지용 데이터
   const getProductsByCategory = () => {
-    const categoryMap = {
-      women: "여성",
-      men: "남성",
-      kids: "키즈",
-      luxury: "럭셔리",
-      shoes: "슈즈",
-      sports: "스포츠",
-      golf: "골프",
-      beauty: "뷰티",
-      life: "라이프",
-      outlet: "아울렛",
-    };
-
-    const subcategoryMap = {
-      outer: "아우터",
-      jacket: "재킷",
-      knit: "니트",
-      shirt: "셔츠",
-      tshirt: "티셔츠",
-      onepiece: "원피스",
-      pants: "팬츠",
-      skirt: "스커트",
-      suit: "정장",
-      boy: "남아",
-      girl: "여아",
-      baby: "베이비",
-      skin: "스킨케어",
-      makeup: "메이크업",
-      perfume: "향수",
-      outdoor: "아웃도어",
-      running: "러닝",
-      yoga: "요가",
-      fitness: "피트니스",
-      tennis: "테니스",
-      swim: "수영",
-      furniture: "가구",
-      pet: "반려동물",
-      car: "자동차",
-    };
-
-    const catKr = categoryMap[category] || category;
-    const subcatKr = subcategoryMap[subcategory] || subcategory;
-
-    // 기본 샘플 데이터 (외부 이미지 사용)
-    const sampleProducts = [
-      {
-        id: 1,
-        brand: "BEAKER ORIGINAL",
-        name: "Women Bandana Pattern Quilted Jumper - Black",
-        img: "https://image.msscdn.net/images/goods_img/20231113/3658826/3658826_17077044817712_500.jpg",
-        desc: "Women Bandana Pattern Quilted Jumper",
-        price: "₩517,750",
-        originalPrice: 545000,
-        discountRate: 5,
-        rating: 4.5,
-        reviewCount: 64,
-        wishCount: 999,
-        colors: ["black", "navy"],
-      },
-      {
-        id: 2,
-        brand: "kuho plus",
-        name: "Satin Short Jumper - Black",
-        img: "https://image.msscdn.net/images/goods_img/20240910/4363025/4363025_17283752565451_500.jpg",
-        desc: "Satin Short Jumper",
-        price: "₩299,000",
-        originalPrice: 299000,
-        discountRate: 0,
-        rating: 4.5,
-        reviewCount: 540,
-        wishCount: 999,
-        colors: ["black"],
-      },
-      {
-        id: 3,
-        brand: "Danton",
-        name: "Women 필리스 원턱 Collarless Vest - Black",
-        img: "https://image.msscdn.net/images/goods_img/20240805/4251631/4251631_17280528906342_500.jpg",
-        desc: "Women 필리스 원턱 Collarless Vest",
-        price: "₩261,250",
-        originalPrice: 275000,
-        discountRate: 5,
-        rating: 4.5,
-        reviewCount: 18,
-        wishCount: 225,
-        colors: ["black", "orange"],
-      },
-      {
-        id: 4,
-        brand: "BEAKER ORIGINAL",
-        name: "Women Faux Fur Shearing Vest - Beige",
-        img: "https://image.msscdn.net/images/goods_img/20231114/3661896/3661896_17077182042388_500.jpg",
-        desc: "Women Faux Fur Shearing Vest",
-        price: "₩375,250",
-        originalPrice: 395000,
-        discountRate: 5,
-        rating: 5.0,
-        reviewCount: 13,
-        wishCount: 474,
-        colors: ["beige", "brown"],
-      },
-      {
-        id: 5,
-        brand: "Danton",
-        name: "Women Inner Down Crewneck Jacket - White",
-        img: "https://image.msscdn.net/images/goods_img/20240902/4339729/4339729_17255034743817_500.jpg",
-        desc: "Women Inner Down Crewneck Jacket",
-        price: "₩318,250",
-        originalPrice: 335000,
-        discountRate: 5,
-        rating: 4.5,
-        reviewCount: 48,
-        wishCount: 253,
-        colors: ["white", "black", "navy"],
-      },
-      {
-        id: 6,
-        brand: "BEANPOLE LADIES",
-        name: "[B. my] 코튼 머신 필링 점퍼 - 블랙",
-        img: "https://image.msscdn.net/images/goods_img/20240822/4297547/4297547_17242684953345_500.jpg",
-        desc: "코튼 머신 필링 점퍼",
-        price: "₩305,100",
-        originalPrice: 339000,
-        discountRate: 10,
-        rating: 4.5,
-        reviewCount: 20,
-        wishCount: 411,
-        colors: ["black", "pink", "blue"],
-      },
-      {
-        id: 7,
-        brand: "BEANPOLE LADIES",
-        name: "오일 터치 경량 점퍼 - 브라운",
-        img: "https://image.msscdn.net/images/goods_img/20240802/4245363/4245363_17227892699999_500.jpg",
-        desc: "오일 터치 경량 점퍼",
-        price: "₩449,100",
-        originalPrice: 499000,
-        discountRate: 10,
-        rating: 4.5,
-        reviewCount: 20,
-        wishCount: 458,
-        colors: ["brown", "beige"],
-      },
-      {
-        id: 8,
-        brand: "Danton",
-        name: "Women Fleece Collarless Vest - Light Grey",
-        img: "https://image.msscdn.net/images/goods_img/20240805/4251624/4251624_17227864535050_500.jpg",
-        desc: "Women Fleece Collarless Vest",
-        price: "₩261,250",
-        originalPrice: 275000,
-        discountRate: 5,
-        rating: 4.5,
-        reviewCount: 18,
-        wishCount: 238,
-        colors: ["grey", "black", "orange"],
-      },
-      {
-        id: 9,
-        brand: "8 seconds",
-        name: "헤링본 와이드 카라 더블 재킷 - 카키",
-        img: "https://image.msscdn.net/images/goods_img/20240808/4263049/4263049_17234063094073_500.jpg",
-        desc: "헤링본 와이드 카라 더블 재킷",
-        price: "₩99,900",
-        originalPrice: 99900,
-        discountRate: 0,
-        rating: 4.5,
-        reviewCount: 12,
-        wishCount: 437,
-        colors: ["brown", "khaki"],
-      },
-      {
-        id: 10,
-        brand: "Danton",
-        name: "Women Inner Down Crewneck Jacket - Taupe",
-        img: "https://image.msscdn.net/images/goods_img/20240902/4339730/4339730_17255034766071_500.jpg",
-        desc: "Women Inner Down Crewneck Jacket",
-        price: "₩346,750",
-        originalPrice: 365000,
-        discountRate: 5,
-        rating: 4.5,
-        reviewCount: 48,
-        wishCount: 235,
-        colors: ["beige", "white", "black"],
-      },
-      {
-        id: 11,
-        brand: "Danton",
-        name: "Women Overall Jacket - Charcoal",
-        img: "https://image.msscdn.net/images/goods_img/20240902/4339744/4339744_17255034847024_500.jpg",
-        desc: "Women Overall Jacket",
-        price: "₩603,250",
-        originalPrice: 635000,
-        discountRate: 5,
-        rating: 4.5,
-        reviewCount: 2,
-        wishCount: 195,
-        colors: ["charcoal", "black"],
-      },
-      {
-        id: 12,
-        brand: "PLAY COMME DES GARCONS",
-        name: "(Unisex) Double Red Heart Wappen Cotton Hood Zip-up - Black",
-        img: "https://image.msscdn.net/images/goods_img/20230816/3470063/3470063_16922291926854_500.jpg",
-        desc: "Double Red Heart Wappen Cotton Hood Zip-up",
-        price: "₩335,000",
-        originalPrice: 335000,
-        discountRate: 0,
-        rating: 4.5,
-        reviewCount: 1,
-        wishCount: 197,
-        colors: ["black"],
-      },
-    ];
-
-    // 로컬 이미지 기반 데이터 추가 (기존 구조 호환)
-    const localProducts = [];
-
-    // 여성 아우터 로컬 데이터 (기존 데이터 유지)
-    if (category === "women" && subcategory === "outer") {
-      const womenOuterData = [
-        { id: 101, name: "베이지 캐주얼 자켓", desc: "데일리로 활용하기 좋은 기본 아우터", price: "₩129,000", img: "/images/여성/아우터/women_outer1.webp" },
-        { id: 102, name: "패턴 자켓", desc: "유니크한 감각으로 스트릿 패션에 적합", price: "₩159,000", img: "/images/여성/아우터/women_outer2.webp" },
-        { id: 103, name: "블랙 라이더 자켓", desc: "시크한 무드의 포인트 아이템", price: "₩189,000", img: "/images/여성/아우터/women_outer3.webp" },
-        { id: 104, name: "경량 패딩 자켓", desc: "가볍지만 따뜻한 간절기 필수템", price: "₩99,000", img: "/images/여성/아우터/women_outer4.webp" },
-        { id: 105, name: "카키 오버핏 자켓", desc: "편안한 핏으로 스타일리시하게 연출 가능", price: "₩149,000", img: "/images/여성/아우터/women_outer5.webp" },
-        { id: 106, name: "블랙 포켓 자켓", desc: "실용성과 멋을 동시에 갖춘 아이템", price: "₩139,000", img: "/images/여성/아우터/women_outer6.webp" },
-      ];
-      womenOuterData.forEach(item => {
-        localProducts.push({
-          ...item,
-          brand: "SSF SHOP",
-          rating: 4.5,
-          reviewCount: Math.floor(Math.random() * 100) + 10,
-          wishCount: Math.floor(Math.random() * 500) + 50,
-        });
-      });
-    }
-
-    // 여성 재킷 로컬 데이터
-    if (category === "women" && subcategory === "jacket") {
-      for (let i = 1; i <= 6; i++) {
-        localProducts.push({
-          id: 200 + i,
-          brand: "SSF SHOP",
-          name: `${subcatKr} 상품 ${i}`,
-          desc: `스타일리시한 ${subcatKr}`,
-          price: `₩${(Math.floor(Math.random() * 200) + 100) * 1000}`,
-          img: `/images/${catKr}/${subcatKr}/women_Jacket${i}.webp`,
-          rating: 4.5,
-          reviewCount: Math.floor(Math.random() * 100),
-          wishCount: Math.floor(Math.random() * 500),
-        });
-      }
-    }
-
-    // 샘플 데이터와 로컬 데이터 병합
-    return [...sampleProducts, ...localProducts];
+    const locals =
+      (localByCategory[category] && localByCategory[category][subcategory]) ||
+      [];
+    return [...sampleProducts, ...locals];
   };
 
-  const products = getProductsByCategory();
+  // 검색 전체 집합(여성 전부 + 샘플)
+  const getAllProductsForSearch = () => {
+    const allLocalWomen = Object.values(localByCategory.women || {}).flat();
+    return [...sampleProducts, ...allLocalWomen];
+  };
 
-  const currentCategory = categoryInfo[category] || { name: category, nameEn: category };
-  const currentSubcategory = subcategoryInfo[subcategory] || { name: subcategory, tabs: ["전체"] };
-
+  // 가격 포맷
   const formatPrice = (price) => {
-    if (typeof price === "string") {
-      return price;
-    }
-    return `₩${price.toLocaleString()}`;
+    if (typeof price === "string") return price;
+    return `₩${Number(price || 0).toLocaleString()}`;
   };
 
+  // 상세 페이지 이동
   const handleProductClick = (product) => {
-    // ProductThumb와 동일한 방식으로 데이터 정규화
     const normalized = {
       id: product.id,
       name: product.name || "상품명 없음",
       image: product.image || product.img || "",
-      img: product.image || product.img || "", // img 필드도 함께 추가
+      img: product.image || product.img || "",
       price:
         typeof product.price === "string"
-          ? Number(String(product.price).replace(/[^\d]/g, "")) || 0
+          ? toNumberPrice(product.price)
           : Number(product.price || 0),
       desc: product.desc || "",
       brand: product.brand || "",
       rating: product.rating || 0,
       reviewCount: product.reviewCount || 0,
     };
-
-    console.log("클릭한 상품:", product);
-    console.log("정규화된 데이터:", normalized);
-
     localStorage.setItem("lastProduct", JSON.stringify(normalized));
     history.push(`/product/${normalized.id}`, { product: normalized });
+  };
+
+  // ===== 위시리스트 =====
+  const readWishlist = () => {
+    try {
+      return JSON.parse(localStorage.getItem("wishlist") || "[]");
+    } catch {
+      return [];
+    }
+  };
+  const isWished = (id) =>
+    readWishlist().some((p) => String(p.id) === String(id));
+
+  const toggleWishlist = (e, product) => {
+    e.stopPropagation();
+    const data = {
+      id: product.id,
+      name: product.name,
+      img: product.image || product.img || "",
+      price: product.price,
+      brand: product.brand || "",
+    };
+    let list = readWishlist();
+    if (isWished(product.id)) {
+      list = list.filter((p) => String(p.id) !== String(product.id));
+    } else {
+      list.unshift(data);
+    }
+    localStorage.setItem("wishlist", JSON.stringify(list));
+    try {
+      window.dispatchEvent(new Event("wishlistUpdated"));
+    } catch {}
+    setRefresh((n) => n + 1);
+  };
+
+  // ===== 정렬 =====
+  const sortProducts = (arr) => {
+    const cp = [...arr];
+    switch (sortBy) {
+      case "낮은가격순":
+        return cp.sort((a, b) => toNumberPrice(a.price) - toNumberPrice(b.price));
+      case "높은가격순":
+        return cp.sort((a, b) => toNumberPrice(b.price) - toNumberPrice(a.price));
+      case "할인율순":
+        return cp.sort((a, b) => (b.discountRate || 0) - (a.discountRate || 0));
+      case "리뷰많은순":
+        return cp.sort((a, b) => (b.reviewCount || 0) - (a.reviewCount || 0));
+      default:
+        return cp; // 인기상품순(전체)
+    }
+  };
+
+  // ===== 최종 리스트 =====
+  const baseProducts = useMemo(() => {
+    return isSearchMode ? getAllProductsForSearch() : getProductsByCategory();
+  }, [isSearchMode, category, subcategory, refresh]); // eslint-disable-line
+
+  const normalizeText = (s) => (s || "").toLowerCase().replace(/\s+/g, "");
+  const filteredProducts = useMemo(() => {
+    let list = baseProducts;
+    if (isSearchMode && searchKeyword) {
+      const key = normalizeText(searchKeyword);
+      list = baseProducts
+        .map((p) => {
+          const n = normalizeText(p.name || "");
+          const exact = n === key ? 1 : 0;
+          const includes = n.includes(key) ? 1 : 0;
+          return { p, score: exact * 2 + includes };
+        })
+        .filter((x) => x.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .map((x) => x.p);
+    }
+    return sortProducts(list);
+  }, [baseProducts, isSearchMode, searchKeyword, sortBy]); // eslint-disable-line
+
+  const productsToShow = filteredProducts;
+
+  // 화면용 메타
+  const currentCategory =
+    categoryInfo[category] || {
+      name: category || "검색",
+      nameEn: (category || "SEARCH").toUpperCase(),
+    };
+  const currentSubcategory =
+    subcategoryInfo[subcategory] || { name: subcategory || "검색 결과", tabs: ["전체"] };
+
+  // 공통 onError 핸들러: 후보 경로 순차 시도
+  const handleImgError = (e) => {
+    const img = e.currentTarget;
+    const rest = img.dataset.candidates
+      ? JSON.parse(img.dataset.candidates)
+      : [];
+    if (rest.length > 0) {
+      const next = rest.shift();
+      img.dataset.candidates = JSON.stringify(rest);
+      img.src = next;
+    } else {
+      img.onerror = null;
+      img.src = `${process.env.PUBLIC_URL}/images/placeholder.png`;
+    }
   };
 
   return (
@@ -388,83 +487,102 @@ export default function ProductList() {
         <div className="container">
           <Link to="/">Home</Link>
           <span className="separator">&gt;</span>
-          <Link to={`/${category}`}>{currentCategory.name}</Link>
-          <span className="separator">&gt;</span>
-          <span className="current">{currentSubcategory.name}</span>
+          {!isSearchMode ? (
+            <>
+              <Link to={`/${category}`}>{currentCategory.name}</Link>
+              <span className="separator">&gt;</span>
+              <span className="current">{currentSubcategory.name}</span>
+            </>
+          ) : (
+            <span className="current">검색</span>
+          )}
         </div>
       </div>
 
       <div className="container">
         {/* Page Title */}
         <div className="page-header">
-          <h1 className="page-title">
-            {currentSubcategory.name} <span className="count">34,085개 상품</span>
-          </h1>
+          {!isSearchMode ? (
+            <h1 className="page-title">
+              {currentSubcategory.name}{" "}
+              <span className="count">{productsToShow.length}개 상품</span>
+            </h1>
+          ) : (
+            <h1 className="page-title">
+              ‘{searchKeyword}’ 검색 결과{" "}
+              <span className="count">{productsToShow.length}개 상품</span>
+            </h1>
+          )}
         </div>
 
-        {/* Brand Logos Section */}
-        <div className="brand-logos-section">
-          {brandLogos.map((brand, index) => (
-            <div key={index} className="brand-logo-item">
-              <img src={brand.img} alt={brand.name} onError={(e) => e.target.style.display = 'none'} />
-            </div>
-          ))}
-        </div>
+        {/* Brand Logos */}
+        {!isSearchMode && (
+          <div className="brand-logos-section">
+            {brandLogos.map((brand, idx) => {
+              const { src, candidates } = srcOf(brand.img);
+              return (
+                <div key={idx} className="brand-logo-item">
+                  <img
+                    src={src}
+                    alt={brand.name}
+                    loading="lazy"
+                    data-candidates={JSON.stringify(candidates)}
+                    onError={handleImgError}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         {/* Tabs */}
-        <div className="category-tabs">
-          {currentSubcategory.tabs.map((tab) => (
-            <button
-              key={tab}
-              className={`tab ${activeTab === tab ? "active" : ""}`}
-              onClick={() => setActiveTab(tab)}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
-
-        {/* Filters and Sort */}
-        <div className="filter-section">
-          <div className="filter-buttons">
-            <div className="filter-dropdown">
+        {!isSearchMode && (
+          <div className="category-tabs">
+            {(currentSubcategory.tabs || ["전체"]).map((tab) => (
               <button
-                className="filter-btn"
-                onClick={() => setShowBrandFilter(!showBrandFilter)}
+                key={tab}
+                className={`tab ${activeTab === tab ? "active" : ""}`}
+                onClick={() => setActiveTab(tab)}
               >
-                브랜드 <span className="arrow">∨</span>
+                {tab}
               </button>
-            </div>
-            <div className="filter-dropdown">
-              <button
-                className="filter-btn"
-                onClick={() => setShowPriceFilter(!showPriceFilter)}
-              >
-                가격 <span className="arrow">∨</span>
-              </button>
-            </div>
-            <div className="filter-dropdown">
-              <button
-                className="filter-btn"
-                onClick={() => setShowSizeFilter(!showSizeFilter)}
-              >
-                사이즈 <span className="arrow">∨</span>
-              </button>
-            </div>
-            <div className="filter-dropdown">
-              <button
-                className="filter-btn"
-                onClick={() => setShowColorFilter(!showColorFilter)}
-              >
-                색상 <span className="arrow">∨</span>
-              </button>
-            </div>
-            <div className="filter-dropdown">
-              <button className="filter-btn">
-                혜택/배송 <span className="arrow">∨</span>
-              </button>
-            </div>
+            ))}
           </div>
+        )}
+
+        {/* Filters / Sort */}
+        <div className="filter-section">
+          {!isSearchMode ? (
+            <div className="filter-buttons">
+              <div className="filter-dropdown">
+                <button className="filter-btn">
+                  브랜드 <span className="arrow">∨</span>
+                </button>
+              </div>
+              <div className="filter-dropdown">
+                <button className="filter-btn">
+                  가격 <span className="arrow">∨</span>
+                </button>
+              </div>
+              <div className="filter-dropdown">
+                <button className="filter-btn">
+                  사이즈 <span className="arrow">∨</span>
+                </button>
+              </div>
+              <div className="filter-dropdown">
+                <button className="filter-btn">
+                  색상 <span className="arrow">∨</span>
+                </button>
+              </div>
+              <div className="filter-dropdown">
+                <button className="filter-btn">
+                  혜택/배송 <span className="arrow">∨</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div />
+          )}
 
           <div className="sort-section">
             <select
@@ -484,106 +602,111 @@ export default function ProductList() {
 
         {/* Product Grid */}
         <div className="product-grid">
-          {products.map((product) => (
-            <div key={product.id} className="product-card">
-              <div
-                className="product-image-link"
-                onClick={() => handleProductClick(product)}
-                style={{ cursor: "pointer" }}
-              >
-                <div className="product-image-wrapper">
-                  <img
-                    src={product.image || product.img}
-                    alt={product.name}
-                    className="product-image"
-                  />
-                  <button className="wishlist-btn" aria-label="찜하기" onClick={(e) => e.stopPropagation()}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                      <path
-                        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
+          {productsToShow.length === 0 ? (
+            <p className="no-result">검색 결과가 없습니다.</p>
+          ) : (
+            productsToShow.map((product) => {
+              const { src, candidates } = srcOf(product);
+              const wished = isWished(product.id);
+              return (
+                <div key={product.id} className="product-card">
+                  <div
+                    className="product-image-link"
+                    onClick={() => handleProductClick(product)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <div className="product-image-wrapper">
+                      <img
+                        src={src}
+                        alt={product.name}
+                        className="product-image"
+                        loading="lazy"
+                        data-candidates={JSON.stringify(candidates)}
+                        onError={handleImgError}
                       />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-
-              <div className="product-info">
-                <div className="product-brand">{product.brand}</div>
-                <div
-                  className="product-name"
-                  onClick={() => handleProductClick(product)}
-                  style={{ cursor: "pointer" }}
-                >
-                  {product.name}
-                </div>
-
-                <div className="product-price">
-                  {product.discountRate > 0 && (
-                    <>
-                      <span className="original-price">
-                        {formatPrice(product.originalPrice)}
-                      </span>
-                      <span className="discount-rate">{product.discountRate}%</span>
-                    </>
-                  )}
-                  <span className="price">{formatPrice(product.price)}</span>
-                </div>
-
-                {product.rating && (
-                  <div className="product-meta">
-                    <div className="rating-reviews">
-                      <span className="rating">★ {product.rating}({product.reviewCount || 0})</span>
-                      {product.wishCount && <span className="wishlist">♥ {product.wishCount}+</span>}
+                      <button
+                        className={`wishlist-btn ${wished ? "active" : ""}`}
+                        aria-label="찜하기"
+                        onClick={(e) => toggleWishlist(e, product)}
+                        title={wished ? "위시리스트에서 제거" : "위시리스트에 추가"}
+                      >
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill={wished ? "currentColor" : "none"}>
+                          <path
+                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </button>
                     </div>
                   </div>
-                )}
 
-                {product.colors && product.colors.length > 0 && (
-                  <div className="product-colors">
-                    {product.colors.map((color, index) => (
-                      <span
-                        key={index}
-                        className="color-dot"
-                        style={{
-                          backgroundColor:
-                            color === "black"
-                              ? "#000"
-                              : color === "white"
-                              ? "#fff"
-                              : color === "navy"
-                              ? "#001f3f"
-                              : color === "beige"
-                              ? "#f5f5dc"
-                              : color === "brown"
-                              ? "#8b4513"
-                              : color === "orange"
-                              ? "#ff6600"
-                              : color === "pink"
-                              ? "#ff69b4"
-                              : color === "blue"
-                              ? "#0074d9"
-                              : color === "grey"
-                              ? "#808080"
-                              : color === "khaki"
-                              ? "#c3b091"
-                              : color === "charcoal"
-                              ? "#36454f"
-                              : color,
-                        }}
-                      ></span>
-                    ))}
+                  <div className="product-info">
+                    <div className="product-brand">{product.brand}</div>
+                    <div
+                      className="product-name"
+                      onClick={() => handleProductClick(product)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      {product.name}
+                    </div>
+
+                    <div className="product-price">
+                      {product.discountRate > 0 && (
+                        <>
+                          <span className="original-price">
+                            {formatPrice(product.originalPrice)}
+                          </span>
+                          <span className="discount-rate">{product.discountRate}%</span>
+                        </>
+                      )}
+                      <span className="price">{formatPrice(product.price)}</span>
+                    </div>
+
+                    {product.rating && (
+                      <div className="product-meta">
+                        <div className="rating-reviews">
+                          <span className="rating">★ {product.rating}({product.reviewCount || 0})</span>
+                          {product.wishCount && <span className="wishlist">♥ {product.wishCount}+</span>}
+                        </div>
+                      </div>
+                    )}
+
+                    {product.colors && product.colors.length > 0 && (
+                      <div className="product-colors">
+                        {product.colors.map((color, idx) => (
+                          <span
+                            key={idx}
+                            className="color-dot"
+                            style={{
+                              backgroundColor:
+                                color === "black" ? "#000"
+                                  : color === "white" ? "#fff"
+                                  : color === "navy" ? "#001f3f"
+                                  : color === "beige" ? "#f5f5dc"
+                                  : color === "brown" ? "#8b4513"
+                                  : color === "orange" ? "#ff6600"
+                                  : color === "pink" ? "#ff69b4"
+                                  : color === "blue" ? "#0074d9"
+                                  : color === "grey" ? "#808080"
+                                  : color === "khaki" ? "#c3b091"
+                                  : color === "charcoal" ? "#36454f"
+                                  : color,
+                            }}
+                          />
+                        ))}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            </div>
-          ))}
+                </div>
+              );
+            })
+          )}
         </div>
 
-        {/* Pagination */}
+        {/* Pagination (목업) */}
         <div className="pagination">
           <button className="page-btn">&lt;</button>
           <button className="page-btn active">1</button>

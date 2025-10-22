@@ -4,12 +4,12 @@ import ProductThumb from "../../components/ProductThumb";
 
 function GolfMen() {
   const products = [
-    { id: 1, name: "", desc: "", price: "", img: "/images/골프/남성/golf_men1.webp" },
-    { id: 2, name: "", desc: "", price: "", img: "/images/골프/남성/golf_men2.webp" },
-    { id: 3, name: "", desc: "", price: "", img: "/images/골프/남성/golf_men3.webp" },
-    { id: 4, name: "", desc: "", price: "", img: "/images/골프/남성/golf_men4.webp" },
-    { id: 5, name: "", desc: "", price: "", img: "/images/골프/남성/golf_men5.webp" },
-    { id: 6, name: "", desc: "", price: "", img: "/images/골프/남성/golf_men6.webp" },
+    { id: 1, name: "", desc: "", price: "", img: "/images/golf/men/golf_men1.webp" },
+    { id: 2, name: "", desc: "", price: "", img: "/images/golf/men/golf_men2.webp" },
+    { id: 3, name: "", desc: "", price: "", img: "/images/golf/men/golf_men3.webp" },
+    { id: 4, name: "", desc: "", price: "", img: "/images/golf/men/golf_men4.webp" },
+    { id: 5, name: "", desc: "", price: "", img: "/images/golf/men/golf_men5.webp" },
+    { id: 6, name: "", desc: "", price: "", img: "/images/golf/men/golf_men6.webp" },
   ];
 
   return (

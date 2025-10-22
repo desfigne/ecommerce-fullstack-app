@@ -5,12 +5,12 @@ import ProductThumb from "../../components/ProductThumb";
 
 function ShoesNew() {
   const products = [
-    { id: 1, name: "", desc: "", price: "", img: "/images/백&슈즈/신상품/shoes_new1.jpg" },
-    { id: 2, name: "", desc: "", price: "", img: "/images/백&슈즈/신상품/shoes_new2.jpg" },
-    { id: 3, name: "", desc: "", price: "", img: "/images/백&슈즈/신상품/shoes_new3.jpg" },
-    { id: 4, name: "", desc: "", price: "", img: "/images/백&슈즈/신상품/shoes_new4.jpg" },
-    { id: 5, name: "", desc: "", price: "", img: "/images/백&슈즈/신상품/shoes_new5.jpg" },
-    { id: 6, name: "", desc: "", price: "", img: "/images/백&슈즈/신상품/shoes_new6.jpg" },
+    { id: 1, name: "", desc: "", price: "", img: "/images/shoes/new/shoes_new1.jpg" },
+    { id: 2, name: "", desc: "", price: "", img: "/images/shoes/new/shoes_new2.jpg" },
+    { id: 3, name: "", desc: "", price: "", img: "/images/shoes/new/shoes_new3.jpg" },
+    { id: 4, name: "", desc: "", price: "", img: "/images/shoes/new/shoes_new4.jpg" },
+    { id: 5, name: "", desc: "", price: "", img: "/images/shoes/new/shoes_new5.jpg" },
+    { id: 6, name: "", desc: "", price: "", img: "/images/shoes/new/shoes_new6.jpg" },
   ];
 
   return (

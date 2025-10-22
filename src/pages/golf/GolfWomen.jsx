@@ -4,12 +4,12 @@ import ProductThumb from "../../components/ProductThumb";
 
 function GolfWomen() {
   const products = [
-    { id: 1, name: "", desc: "", price: "", img: "/images/골프/여성/golf_women1.webp" },
-    { id: 2, name: "", desc: "", price: "", img: "/images/골프/여성/golf_women2.webp" },
-    { id: 3, name: "", desc: "", price: "", img: "/images/골프/여성/golf_women3.webp" },
-    { id: 4, name: "", desc: "", price: "", img: "/images/골프/여성/golf_women4.webp" },
-    { id: 5, name: "", desc: "", price: "", img: "/images/골프/여성/golf_women5.webp" },
-    { id: 6, name: "", desc: "", price: "", img: "/images/골프/여성/golf_women6.webp" },
+    { id: 1, name: "", desc: "", price: "", img: "/images/Golf/women/golf_women1.webp" },
+    { id: 2, name: "", desc: "", price: "", img: "/images/Golf/women/golf_women2.webp" },
+    { id: 3, name: "", desc: "", price: "", img: "/images/Golf/women/golf_women3.webp" },
+    { id: 4, name: "", desc: "", price: "", img: "/images/Golf/women/golf_women4.webp" },
+    { id: 5, name: "", desc: "", price: "", img: "/images/Golf/women/golf_women5.webp" },
+    { id: 6, name: "", desc: "", price: "", img: "/images/Golf/women/golf_women6.webp" },
   ];
 
   return (

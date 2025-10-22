@@ -38,3 +38,45 @@ export function getAuth() {
     return null;
   }
 }
+
+// 네이버 로그인 API
+export function naverLoginApi(userData) {
+  const user = {
+    email: userData.email,
+    name: userData.name,
+    role: "user",
+    loginType: "naver",
+    naverId: userData.id
+  };
+
+  const token = "naver-user-token-" + Date.now();
+  localStorage.setItem("auth", JSON.stringify({ email: user.email, role: "user", token }));
+  localStorage.setItem("isLogin", "true");
+  localStorage.setItem("loginUser", JSON.stringify(user));
+
+  // 이벤트 발행
+  window.dispatchEvent(new Event("auth:changed"));
+
+  return { ok: true, role: "user", user };
+}
+
+// 카카오 로그인 API
+export function kakaoLoginApi(userData) {
+  const user = {
+    email: userData.email,
+    name: userData.name,
+    role: "user",
+    loginType: "kakao",
+    kakaoId: userData.id
+  };
+
+  const token = "kakao-user-token-" + Date.now();
+  localStorage.setItem("auth", JSON.stringify({ email: user.email, role: "user", token }));
+  localStorage.setItem("isLogin", "true");
+  localStorage.setItem("loginUser", JSON.stringify(user));
+
+  // 이벤트 발행
+  window.dispatchEvent(new Event("auth:changed"));
+
+  return { ok: true, role: "user", user };
+}

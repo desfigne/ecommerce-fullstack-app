@@ -4,12 +4,12 @@ import ProductThumb from "../../components/ProductThumb";
 
 function OutletKids() {
   const products = [
-    { id: 1, name: "", desc: "", price: "", img: "/images/아울렛/키즈/outlet_kids1.webp" },
-    { id: 2, name: "", desc: "", price: "", img: "/images/아울렛/키즈/outlet_kids2.webp" },
-    { id: 3, name: "", desc: "", price: "", img: "/images/아울렛/키즈/outlet_kids3.webp" },
-    { id: 4, name: "", desc: "", price: "", img: "/images/아울렛/키즈/outlet_kids4.webp" },
-    { id: 5, name: "", desc: "", price: "", img: "/images/아울렛/키즈/outlet_kids5.webp" },
-    { id: 6, name: "", desc: "", price: "", img: "/images/아울렛/키즈/outlet_kids6.webp" },
+    { id: 1, name: "", desc: "", price: "", img: "/images/outlet/kids/outlet_kids1.webp" },
+    { id: 2, name: "", desc: "", price: "", img: "/images/outlet/kids/outlet_kids2.webp" },
+    { id: 3, name: "", desc: "", price: "", img: "/images/outlet/kids/outlet_kids3.webp" },
+    { id: 4, name: "", desc: "", price: "", img: "/images/outlet/kids/outlet_kids4.webp" },
+    { id: 5, name: "", desc: "", price: "", img: "/images/outlet/kids/outlet_kids5.webp" },
+    { id: 6, name: "", desc: "", price: "", img: "/images/outlet/kids/outlet_kids6.webp" },
   ];
 
   return (
